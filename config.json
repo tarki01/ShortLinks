@@ -1,0 +1,11 @@
+{
+  "baseUrl": "click.by/",
+  "defaultTTLHours": 24,
+  "defaultMaxClicks": 100,
+  "shortCodeLength": 6,
+  "storageFile": "data/url_shortener_data.json",
+  "cleanupIntervalMinutes": 60,
+  "enableAutoRedirect": true,
+  "dateTimeFormat": "yyyy-MM-dd HH:mm",
+  "maxTTLDays": 365
+}
