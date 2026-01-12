@@ -1,1 +1,148 @@
+name: Java CI/CD Pipeline
 
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  :
+    - cron: '0 2 * * 1'  # Каждый понедельник в 2:00 AM
+
+env:
+  JAVA_VERSION: '17'
+  MAVEN_VERSION: '3.9.6'
+  PROJECT_NAME: 'url-shortener'
+  REPORT_DIR: 'reports'
+
+jobs:
+  # Job 1: Сборка проекта
+  build:
+    name: 🏗️ Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Полная история для анализа
+    
+    - name: ⚙️ Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        cache: 'maven'
+    
+    - name: 🔍 Validate pom.xml
+      run: |
+        echo "🔍 Проверка валидности pom.xml..."
+        mvn help:effective-pom -q
+        echo "✅ pom.xml валиден"
+    
+    - name: 📦 Build with Maven
+      run: |
+        echo "🏗️ Начинаем сборку проекта..."
+        mvn clean compile -DskipTests
+        echo "✅ Сборка завершена успешно"
+    
+    - name: 💾 Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: |
+          target/classes/
+          ${{ env.REPORT_DIR }}/dependency-tree.txt
+        retention-days: 7
+
+  # Job 2: Тестирование
+  test:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: ⚙️ Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        cache: 'maven'
+    
+    - name: 🧪 Run unit tests
+      run: |
+        echo "🧪 Запуск юнит-тестов..."
+        mvn test
+        
+        # Проверяем результаты тестов
+        if [ -f "target/surefire-reports/TEST-com.urlshortener.test.UniqueShortCodesTest.xml" ]; then
+          echo "✅ UniqueShortCodesTest выполнен"
+        fi
+        if [ -f "target/surefire-reports/TEST-com.urlshortener.test.ClickLimitTest.xml" ]; then
+          echo "✅ ClickLimitTest выполнен"
+        fi
+        if [ -f "target/surefire-reports/TEST-com.urlshortener.test.ExpirationCleanupTest.xml" ]; then
+          echo "✅ ExpirationCleanupTest выполнен"
+        fi
+        if [ -f "target/surefire-reports/TEST-com.urlshortener.test.UserNotificationTest.xml" ]; then
+          echo "✅ UserNotificationTest выполнен"
+        fi
+
+  # Job 3: Линтинг и анализ кода (SBOM)
+  lint-and-analyze:
+    name: 🔍 Lint & Analyze (SBOM)
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: ⚙️ Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        cache: 'maven'
+    
+    - name: 📋 Checkstyle - Проверка стиля кода
+      run: |
+        echo "📋 Запуск Checkstyle..."
+        mvn checkstyle:check
+        echo "✅ Checkstyle проверка завершена"
+    
+    - name: 🔎 SpotBugs - Поиск багов
+      run: |
+        echo "🔎 Запуск SpotBugs..."
+        mvn spotbugs:check
+        echo "✅ SpotBugs проверка завершена"
+    
+    - name: 📝 PMD - Анализ кода
+      run: |
+        echo "📝 Запуск PMD..."
+        mvn pmd:check
+        echo "✅ PMD анализ завершен"
+    
+    - name: 🛡️ OWASP Dependency Check - Проверка уязвимостей
+      run: |
+        echo "🛡️ Запуск OWASP Dependency Check..."
+        mvn org.owasp:dependency-check-maven:check
+        echo "✅ Проверка зависимостей завершена"
+    
+    - name: 📦 CycloneDX SBOM - Генерация SBOM
+      run: |
+        echo "📦 Генерация SBOM (Software Bill of Materials)..."
+        mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
+        echo "✅ SBOM сгенерирован"
+        
+        # Выводим информацию о зависимостях
+        if [ -f "target/bom.xml" ]; then
+          COMPONENTS=$(grep -c '<component' target/bom.xml || echo "0")
+          VULNERABILITIES=$(grep -c 'vulnerability' target/bom.xml || echo "0")
+          echo "📊 Статистика SBOM:"
+          echo "   • Компонентов: $COMPONENTS"
+          echo "   • Уязвимостей: $VULNERABILITIES"
+        fi
+    
