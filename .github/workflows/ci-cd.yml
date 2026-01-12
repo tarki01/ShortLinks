@@ -5,7 +5,7 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
-  :
+  schedule:
     - cron: '0 2 * * 1'  # Каждый понедельник в 2:00 AM
 
 env:
@@ -44,6 +44,13 @@ jobs:
         echo "🏗️ Начинаем сборку проекта..."
         mvn clean compile -DskipTests
         echo "✅ Сборка завершена успешно"
+    
+    - name: 📊 Generate build report
+      run: |
+        echo "📊 Генерация отчета о сборке..."
+        mkdir -p ${{ env.REPORT_DIR }}
+        mvn dependency:tree -DoutputFile=${{ env.REPORT_DIR }}/dependency-tree.txt
+        echo "✅ Отчет зависимостей сгенерирован"
     
     - name: 💾 Upload build artifacts
       uses: actions/upload-artifact@v4
@@ -145,4 +152,4 @@ jobs:
           echo "   • Компонентов: $COMPONENTS"
           echo "   • Уязвимостей: $VULNERABILITIES"
         fi
-    
+
