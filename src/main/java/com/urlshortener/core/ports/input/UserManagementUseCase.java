@@ -6,7 +6,7 @@ import com.urlshortener.core.domain.valueobjects.UserId;
 import java.util.Optional;
 
 /**
- * Входной порт (Use Case) для управления пользователями
+ * Входной порт для управления пользователями
  */
 public interface UserManagementUseCase {
 

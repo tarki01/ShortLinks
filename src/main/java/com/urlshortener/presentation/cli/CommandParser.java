@@ -58,7 +58,7 @@ public class CommandParser {
 
     private CommandType parseCommandType(String command) {
         return switch (command) {
-            case "shorten" -> CommandType.SHORTEN;
+            case "sh" -> CommandType.SHORTEN;
             case "go" -> CommandType.GO;
             case "list" -> CommandType.LIST;
             case "info" -> CommandType.INFO;

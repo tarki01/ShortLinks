@@ -18,10 +18,10 @@ public final class Url {
 
     private void validate(String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("URL cannot be empty");
+            throw new IllegalArgumentException("URL не может быть пустым");
         }
         if (value.length() > 2048) {
-            throw new IllegalArgumentException("URL is too long");
+            throw new IllegalArgumentException("URL слишком длинное");
         }
     }
 
@@ -42,10 +42,6 @@ public final class Url {
     @JsonValue
     public String value() {
         return value;
-    }
-
-    public boolean isSecure() {
-        return value.toLowerCase().startsWith("https://");
     }
 
     @Override

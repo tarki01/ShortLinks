@@ -38,32 +38,6 @@ public class Config {
 
     public Config() {}
 
-    // Валидация конфигурации
-    public boolean isValid() {
-        if (baseUrl == null || baseUrl.trim().isEmpty()) {
-            return false;
-        }
-        if (defaultTTLHours <= 0) {
-            return false;
-        }
-        if (defaultMaxClicks <= 0) {
-            return false;
-        }
-        if (shortCodeLength < 4 || shortCodeLength > 10) {
-            return false;
-        }
-        if (storageFile == null || storageFile.trim().isEmpty()) {
-            return false;
-        }
-        if (maxTTLDays <= 0 || maxTTLDays > 3650) {
-            return false;
-        }
-        if (dateTimeFormat == null || dateTimeFormat.trim().isEmpty()) {
-            return false;
-        }
-        return true;
-    }
-
     // Getters and Setters
     public String getBaseUrl() {
         return baseUrl;
@@ -137,13 +111,9 @@ public class Config {
         this.maxTTLDays = maxTTLDays;
     }
 
-    public DateTimeFormatter getDateTimeFormatter() {
-        return DateTimeFormatter.ofPattern(dateTimeFormat);
-    }
-
     public static Config createDefault() {
         Config config = new Config();
-        config.setBaseUrl("http://localhost:8080/");
+        config.setBaseUrl("click.by/");
         config.setDefaultTTLHours(24);
         config.setDefaultMaxClicks(100);
         config.setShortCodeLength(6);

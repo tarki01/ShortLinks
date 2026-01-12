@@ -5,6 +5,6 @@ package com.urlshortener.core.domain.exceptions;
  */
 public class ValidationException extends DomainException {
     public ValidationException(String message) {
-        super("Validation error: " + message);
+        super("Ошибка валидации: " + message);
     }
 }

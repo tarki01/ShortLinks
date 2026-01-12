@@ -2,8 +2,6 @@ package com.urlshortener.infrastructure.persistence;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.urlshortener.core.domain.models.Config;
 import com.urlshortener.core.domain.models.ShortenedUrl;
 import com.urlshortener.core.domain.valueobjects.ShortCode;
@@ -126,7 +124,6 @@ public class FileUrlRepository implements UrlRepository {
         File file = new File(storageFile);
 
         if (!file.exists()) {
-            System.out.println("ℹ️ Файл данных не найден, создаю новый");
             file.getParentFile().mkdirs();
             return;
         }
@@ -174,19 +171,11 @@ public class FileUrlRepository implements UrlRepository {
                         storage.put(shortCode, url);
                         userUrls.computeIfAbsent(userIdObj.value(), k -> new HashSet<>())
                                 .add(shortCode);
-
-                        // СОХРАНЯЕМ ПОЛЬЗОВАТЕЛЯ В UserRepository
-                        // Это нужно делать через Application или другой механизм
-                        // Но пока просто создаем пользователя если его нет
-
                     } catch (Exception e) {
                         System.err.println("⚠️ Ошибка загрузки записи: " + e.getMessage());
                     }
                 }
             }
-
-            System.out.println("✅ Загружено " + storage.size() + " ссылок из " + storageFile);
-
         } catch (IOException e) {
             System.err.println("❌ Ошибка загрузки данных: " + e.getMessage());
         }

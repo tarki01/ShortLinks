@@ -8,7 +8,7 @@ import com.urlshortener.core.ports.output.UserRepository;
 import java.util.Optional;
 
 /**
- * Реализация Use Case для управления пользователями
+ * Реализация для управления пользователями
  */
 public class UserServiceImpl implements UserManagementUseCase {
 

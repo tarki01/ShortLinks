@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Реализация Use Case для статистики
+ * Реализация для статистики
  */
 public class StatisticsServiceImpl implements StatisticsUseCase {
 

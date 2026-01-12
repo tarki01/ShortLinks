@@ -18,13 +18,13 @@ public final class ShortCode {
 
     private void validate(String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("Short code cannot be empty");
+            throw new IllegalArgumentException("Короткий код не может быть пустым");
         }
         if (value.length() < 3 || value.length() > 10) {
-            throw new IllegalArgumentException("Short code must be 3-10 characters");
+            throw new IllegalArgumentException("Короткий код должен содержать 3-10 символов");
         }
         if (!value.matches("^[A-Za-z0-9]+$")) {
-            throw new IllegalArgumentException("Short code must contain only alphanumeric characters");
+            throw new IllegalArgumentException("Короткий код должен содержать только латинские буквы а также цифры");
         }
     }
 
@@ -35,7 +35,7 @@ public final class ShortCode {
 
     public static ShortCode fromShortUrl(String shortUrl, String baseUrl) {
         if (!shortUrl.startsWith(baseUrl)) {
-            throw new IllegalArgumentException("Short URL must start with base URL");
+            throw new IllegalArgumentException("Короткий URL должен стартовать с Base URL");
         }
 
         String code = shortUrl.substring(baseUrl.length());

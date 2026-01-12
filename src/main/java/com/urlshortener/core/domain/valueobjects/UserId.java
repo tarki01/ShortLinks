@@ -13,7 +13,7 @@ public final class UserId {
 
     @JsonCreator
     public UserId(UUID value) {
-        this.value = Objects.requireNonNull(value, "User ID cannot be null");
+        this.value = Objects.requireNonNull(value, "ID пользовател не может быть null");
     }
 
     public static UserId generate() {
@@ -25,7 +25,7 @@ public final class UserId {
         try {
             return new UserId(UUID.fromString(uuid));
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid UUID format: " + uuid);
+            throw new IllegalArgumentException("Неверный формат UUID: " + uuid);
         }
     }
 

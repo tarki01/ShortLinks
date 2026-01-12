@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Входной порт (Use Case) для операций с короткими ссылками
+ * Входной порт для операций с короткими ссылками
  */
 public interface UrlShortenerUseCase {
 

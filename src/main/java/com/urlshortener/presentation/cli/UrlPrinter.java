@@ -14,40 +14,33 @@ public class UrlPrinter {
     public void printBanner() {
         System.out.println();
         System.out.println(ConsoleColors.cyan("╔══════════════════════════════════════════════════════════════════════╗"));
-        System.out.println(ConsoleColors.cyan("║") + ConsoleColors.bold(ConsoleColors.purple(
-                "                    🔗 СЕРВИС СОКРАЩЕНИЯ ССЫЛОК v2.0                  ")) +
-                ConsoleColors.cyan("║"));
-        System.out.println(ConsoleColors.cyan("║") + ConsoleColors.yellow(
-                "        Дата истечения • Сокращенный UUID • Редактирование ссылок      ") +
-                ConsoleColors.cyan("║"));
+        System.out.println(ConsoleColors.bold(ConsoleColors.purple(
+                "                      🔗 СЕРВИС СОКРАЩЕНИЯ ССЫЛОК                ")));
         System.out.println(ConsoleColors.cyan("╚══════════════════════════════════════════════════════════════════════╝"));
         System.out.println();
     }
 
     public void printHelp() {
         System.out.println(ConsoleColors.bold(ConsoleColors.blue("📖 ДОСТУПНЫЕ КОМАНДЫ:")));
-        System.out.println("┌─────────────────────────────────────────────────────────────────────┐");
-        System.out.println("│ " + ConsoleColors.green("shorten <url> [дата] [переходы]") + " - Сократить URL с параметами │");
-        System.out.println("│ " + ConsoleColors.green("go <короткая_ссылка>") + "         - Перейти по короткой ссылке    │");
-        System.out.println("│ " + ConsoleColors.green("list") + "                       - Мои ссылки                   │");
-        System.out.println("│ " + ConsoleColors.green("info <короткая_ссылка>") + "       - Информация о ссылке          │");
-        System.out.println("│ " + ConsoleColors.green("edit <короткая_ссылка> <url> <дата>") + " - Редактировать ссылку  │");
-        System.out.println("│ " + ConsoleColors.green("delete <короткая_ссылка>") + "     - Удалить мою ссылку           │");
-        System.out.println("│ " + ConsoleColors.green("switch <user_id>") + "           - Сменить пользователя         │");
-        System.out.println("│ " + ConsoleColors.green("newuser") + "                    - Создать нового пользователя  │");
-        System.out.println("│ " + ConsoleColors.green("whoami") + "                     - Текущий пользователь         │");
-        System.out.println("│ " + ConsoleColors.green("stats") + "                      - Статистика                   │");
-        System.out.println("│ " + ConsoleColors.green("config") + "                     - Показать конфигурацию        │");
-        System.out.println("│ " + ConsoleColors.green("help") + "                       - Эта справка                  │");
-        System.out.println("│ " + ConsoleColors.green("exit") + "                       - Выйти из программы           │");
+        System.out.println("┌─────────────────────────────────────────────────────────────────────-");
+        System.out.println("│ " + ConsoleColors.green("sh <url> [дата] [переходы]") + " - Сократить URL с параметами ");
+        System.out.println("│ " + ConsoleColors.green("go <короткая_ссылка>") + "         - Перейти по короткой ссылке    ");
+        System.out.println("│ " + ConsoleColors.green("list") + "                       - Мои ссылки                   ");
+        System.out.println("│ " + ConsoleColors.green("info <короткая_ссылка>") + "       - Информация о ссылке          ");
+        System.out.println("│ " + ConsoleColors.green("edit <короткая_ссылка> <url> <дата>") + " - Редактировать ссылку  ");
+        System.out.println("│ " + ConsoleColors.green("delete <короткая_ссылка>") + "     - Удалить мою ссылку           ");
+        System.out.println("│ " + ConsoleColors.green("switch <user_id>") + "           - Сменить пользователя         ");
+        System.out.println("│ " + ConsoleColors.green("newuser") + "                    - Создать нового пользователя  ");
+        System.out.println("│ " + ConsoleColors.green("whoami") + "                     - Текущий пользователь         ");
+        System.out.println("│ " + ConsoleColors.green("stats") + "                      - Статистика                   ");
+        System.out.println("│ " + ConsoleColors.green("config") + "                     - Показать конфигурацию        ");
+        System.out.println("│ " + ConsoleColors.green("help") + "                       - Эта справка                  ");
+        System.out.println("│ " + ConsoleColors.green("exit") + "                       - Выйти из программы           ");
         System.out.println("└─────────────────────────────────────────────────────────────────────┘");
         System.out.println();
         System.out.println(ConsoleColors.bold(ConsoleColors.yellow("💡 ПРИМЕРЫ КОМАНДЫ SHORTEN:")));
-        System.out.println("  " + ConsoleColors.cyan("shorten https://google.com") + " - сократить с параметрами по умолчанию");
-        System.out.println("  " + ConsoleColors.cyan("shorten https://google.com 2024-12-31 23:59") + " - с датой истечения");
-        System.out.println("  " + ConsoleColors.cyan("shorten https://google.com 50") + " - с 50 переходами");
-        System.out.println("  " + ConsoleColors.cyan("shorten https://google.com 2024-12-31 23:59 100") + " - с датой и 100 переходами");
-        System.out.println("  " + ConsoleColors.cyan("shorten https://google.com 24 50") + " - на 24 часа и 50 переходов");
+        System.out.println("  " + ConsoleColors.cyan("sh https://google.com") + " - сократить с параметрами по умолчанию");
+        System.out.println("  " + ConsoleColors.cyan("sh https://google.com 2026-12-31 23:59") + " - с датой истечения");
         System.out.println();
     }
 
@@ -85,33 +78,36 @@ public class UrlPrinter {
         if (urls.isEmpty()) {
             System.out.println(ConsoleColors.yellow("📭 У вас пока нет сокращенных ссылок"));
             System.out.println("   Используйте команду " +
-                    ConsoleColors.green("shorten <url>") + " чтобы создать первую");
+                    ConsoleColors.green("sh <url>") + " чтобы создать первую");
             return;
         }
 
         System.out.println();
         System.out.println(ConsoleColors.bold(ConsoleColors.blue("📋 ВАШИ ССЫЛКИ (" + urls.size() + ")")));
-        System.out.println("┌──────────────────────────────────┬──────────────────────────────────────────┬──────────┬────────────┬────────┐");
-        System.out.println("│          Короткая ссылка         │                 URL                      │ Переходы │   Статус   │  Ост.  │");
-        System.out.println("├──────────────────────────────────┼──────────────────────────────────────────┼──────────┼────────────┼────────┤");
+        System.out.println("┌──────────────────────────────────┬──────────────────────────────────────────┬──────────┬────────────┬────────────────────┐");
+        System.out.println("│          Короткая ссылка         │                 URL                      │ Переходы │   Статус   │     Истекает      │");
+        System.out.println("├──────────────────────────────────┼──────────────────────────────────────────┼──────────┼────────────┼────────────────────┤");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
         for (ShortenedUrl url : urls) {
             String shortUrl = url.getShortUrl(baseUrl);
             String displayShortUrl = truncate(shortUrl, 30);
 
             String displayUrl = truncate(url.getOriginalUrl().value(), 40);
+            String expiresAt = url.getExpiresAt().format(formatter);
 
-            System.out.printf("│ %-30s │ %-40s │ %6d/%d │ %-12s │ %-4dч │\n",
+            System.out.printf("│ %-30s │ %-40s │ %6d/%d │ %-12s │ %-16s │\n",
                     displayShortUrl,
                     displayUrl,
                     url.getCurrentClicks(),
                     url.getMaxClicks(),
                     url.getStatus(),
-                    url.getRemainingHours()
+                    expiresAt
             );
         }
 
-        System.out.println("└──────────────────────────────────┴──────────────────────────────────────────┴──────────┴────────────┴────────┘");
+        System.out.println("└──────────────────────────────────┴──────────────────────────────────────────┴──────────┴────────────┴────────────────────┘");
 
         // Статистика
         long activeCount = urls.stream().filter(ShortenedUrl::canBeAccessed).count();

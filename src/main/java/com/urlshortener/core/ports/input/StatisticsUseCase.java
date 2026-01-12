@@ -5,7 +5,7 @@ import com.urlshortener.core.domain.valueobjects.UserId;
 import java.util.Map;
 
 /**
- * Входной порт (Use Case) для статистики
+ * Входной порт для статистики
  */
 public interface StatisticsUseCase {
 

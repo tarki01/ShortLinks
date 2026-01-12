@@ -30,8 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 public class StartingUp {
     public void start() {
-        System.out.println("🚀 Запуск сервиса сокращения ссылок...");
-
         try {
             // 1. Инициализация инфраструктурных компонентов
             ObjectMapper objectMapper = createObjectMapper();
@@ -66,13 +64,11 @@ public class StartingUp {
 
             UserManagementUseCase userService = new UserServiceImpl(userRepository);
 
-            // НАСТРОИТЬ UserRepository ДЛЯ ПОИСКА ПО КОРОТКОМУ ID
-            setupUserShortIdIndex(userRepository);
-
+            // Наладить статистику
             StatisticsUseCase statisticsService = new StatisticsServiceImpl(
                     urlRepository, userRepository, config);
 
-            // 7. Запуск планировщика задач
+            // 7. Автоматическая очистка
             ScheduledExecutorService scheduler = startScheduler(urlRepository, config);
 
             // 8. Создание и запуск CLI
@@ -84,7 +80,7 @@ public class StartingUp {
                     config.isEnableAutoRedirect()
             );
 
-            // Обработка аргументов командной строки
+            // Запуск основной работы
             cli.start();
 
             // 9. Завершение работы
@@ -117,20 +113,9 @@ public class StartingUp {
             for (com.urlshortener.core.domain.valueobjects.UserId userId : uniqueUserIds) {
                 User user = new User(userId);
                 userRepository.save(user);
-                System.out.println("👤 Загружен пользователь: " + userId.shortId() + "...");
             }
 
-            System.out.println("✅ Загружено " + uniqueUserIds.size() + " пользователей из данных");
-
-        } catch (Exception e) {
-            System.err.println("⚠️ Ошибка загрузки пользователей: " + e.getMessage());
-        }
-    }
-
-    private static void setupUserShortIdIndex(UserRepository userRepository) {
-        // Создаем индекс shortId -> User
-        // InMemoryUserRepository уже делает это автоматически при сохранении
-        System.out.println("📋 Индекс short ID создан");
+        } catch (Exception e) {}
     }
 
     private static ObjectMapper createObjectMapper() {
@@ -144,17 +129,6 @@ public class StartingUp {
 
     private static ScheduledExecutorService startScheduler(UrlRepository urlRepository, Config config) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
-
-        // Задача автосохранения
-        scheduler.scheduleAtFixedRate(() -> {
-            try {
-                // В этой реализации автосохранение происходит в репозитории
-                System.out.println("💾 Автосохранение выполнено");
-            } catch (Exception e) {
-                System.err.println("❌ Ошибка автосохранения: " + e.getMessage());
-            }
-        }, 5, 5, TimeUnit.MINUTES);
-
         // Задача очистки просроченных ссылок
         scheduler.scheduleAtFixedRate(() -> {
                     try {

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Реализация Use Case для операций с короткими ссылками
+ * Реализация для операций с короткими ссылками
  */
 public class UrlShortenerServiceImpl implements UrlShortenerUseCase {
 
@@ -179,30 +179,31 @@ public class UrlShortenerServiceImpl implements UrlShortenerUseCase {
             throw new PermissionDeniedException("У вас нет прав на редактирование этой ссылки");
         }
 
-        boolean changesMade = false;
-
-        // Обновление URL
-        if (newUrl != null && !url.getOriginalUrl().equals(newUrl)) {
-            validateUrl(newUrl.value());
-            if (url.updateUrl(newUrl)) {
-                changesMade = true;
-            }
+        // Проверяем, что что-то нужно изменить
+        if (newUrl == null && newExpiresAt == null) {
+            return url; // Ничего не меняем
         }
 
-        // Обновление даты истечения
-        if (newExpiresAt != null && !url.getExpiresAt().equals(newExpiresAt)) {
+        // Валидация новых параметров
+        if (newUrl != null) {
+            validateUrl(newUrl.value());
+        }
+
+        if (newExpiresAt != null) {
             validateExpirationDate(newExpiresAt);
             LocalDateTime maxExpiresAt = dateTimeProvider.now().plusDays(maxTTLDays);
-            if (url.updateExpiration(newExpiresAt, maxExpiresAt)) {
-                changesMade = true;
+            if (newExpiresAt.isAfter(maxExpiresAt)) {
+                throw new ValidationException(
+                        "Срок действия ссылки не может превышать " + maxTTLDays + " дней"
+                );
             }
         }
 
-        if (changesMade) {
-            return urlRepository.save(url);
-        }
+        // Создаем обновленную версию ссылки
+        ShortenedUrl updatedUrl = url.withUpdatedParams(newUrl, newExpiresAt);
 
-        return url;
+        // Сохраняем в репозиторий
+        return urlRepository.save(updatedUrl);
     }
 
     @Override

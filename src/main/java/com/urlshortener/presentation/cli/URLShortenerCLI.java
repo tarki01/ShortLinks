@@ -8,7 +8,6 @@ import com.urlshortener.core.ports.input.StatisticsUseCase;
 import com.urlshortener.core.ports.input.UrlShortenerUseCase;
 import com.urlshortener.core.ports.input.UserManagementUseCase;
 import com.urlshortener.core.services.UserServiceImpl;
-import com.urlshortener.infrastructure.security.UserValidator;
 
 import java.awt.Desktop;
 import java.net.URI;
@@ -152,7 +151,7 @@ public class URLShortenerCLI {
 
     private void handleShorten(CommandParser.ParsedCommand parsed) {
         if (parsed.getArgCount() < 1) {
-            urlPrinter.printError("Используйте: shorten <url> [дата/часы] [переходы]");
+            urlPrinter.printError("Используйте: sh <url> [дата/часы] [переходы]");
             return;
         }
 
@@ -171,7 +170,7 @@ public class URLShortenerCLI {
                 String param2 = parsed.getArg(1);
 
                 if (parsed.getArgCount() == 2) {
-                    // Два параметра: shorten <url> <число> или shorten <url> <дата>
+                    // Два параметра: sh <url> <число> или sh <url> <дата>
                     if (param2.matches("^\\d+$")) {
                         maxClicks = commandParser.parseInteger(param2, "Количество переходов");
                     } else {
@@ -219,8 +218,6 @@ public class URLShortenerCLI {
                 if (maxClicks != null) {
                     shortenedUrl = urlShortenerUseCase.shortenUrl(
                             originalUrl, currentUser.getId(), ttlHours);
-                    // Note: оригинальный сервис использовал ttlHours для часов, но без maxClicks параметра
-                    // В этой версии просто используем дефолтные клики
                 } else {
                     shortenedUrl = urlShortenerUseCase.shortenUrl(
                             originalUrl, currentUser.getId(), ttlHours);
@@ -252,20 +249,25 @@ public class URLShortenerCLI {
         try {
             ShortCode shortCode = ShortCode.fromShortUrl(parsed.getArg(0), baseUrl);
             Url originalUrl = urlShortenerUseCase.redirect(shortCode);
-
             urlPrinter.printSuccess("↪️ Перенаправление на: " +
                     truncate(originalUrl.value(), 60));
 
-            if (enableAutoRedirect && Desktop.isDesktopSupported()) {
+            // Спросить пользователя, куда перенаправить
+            System.out.print(ConsoleColors.cyan("🖥️  Открыть ссылку в: 1) Консоли  2) Браузере [1/2]: "));
+            String choice = scanner.nextLine().trim();
+
+            if ("2".equals(choice) && Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().browse(new URI(originalUrl.value()));
-                    urlPrinter.printWarning("🌐 Открываю в браузере...");
+                    urlPrinter.printSuccess("🌐 Открываю в браузере...");
                 } catch (Exception e) {
-                    urlPrinter.printWarning("Не удалось открыть браузер: " + e.getMessage());
-                    urlPrinter.printInfo("📋 URL скопируйте вручную: " + originalUrl.value());
+                    urlPrinter.printError("Не удалось открыть браузер: " + e.getMessage());
+                    urlPrinter.printInfo("📋 URL: " + originalUrl.value());
                 }
             } else {
-                urlPrinter.printInfo("📋 URL: " + originalUrl.value());
+                // Выводим в консоль
+                urlPrinter.printInfo("🔗 Полный URL: " + originalUrl.value());
+                System.out.println(ConsoleColors.cyan("📋 Скопируйте URL выше и вставьте в браузер"));
             }
 
         } catch (Exception e) {

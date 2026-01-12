@@ -5,6 +5,6 @@ package com.urlshortener.core.domain.exceptions;
  */
 public class UrlNotFoundException extends DomainException {
     public UrlNotFoundException(String shortCode) {
-        super("URL not found with short code: " + shortCode);
+        super("URL не найдено с данном коротким кодом: " + shortCode);
     }
 }

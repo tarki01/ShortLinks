@@ -64,7 +64,7 @@ public class ShortenedUrl {
                                                           UserId userId, LocalDateTime expiresAt,
                                                           int maxClicks) {
         if (expiresAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Expiration date must be in the future");
+            throw new IllegalArgumentException("Дата истечения должна быть в будущем!");
         }
 
         return new ShortenedUrl(
@@ -109,7 +109,7 @@ public class ShortenedUrl {
 
     public void incrementClicks() {
         if (!canBeAccessed()) {
-            throw new IllegalStateException("Cannot increment clicks on inaccessible URL");
+            throw new IllegalStateException("Невозможно увеличить количество переходов на несуществующей ссылке!");
         }
 
         this.currentClicks++;
@@ -119,7 +119,7 @@ public class ShortenedUrl {
     }
 
     public boolean updateUrl(Url newUrl) {
-        if (newUrl == null) {
+        if (newUrl == null || this.originalUrl.equals(newUrl)) {
             return false;
         }
 
@@ -151,7 +151,7 @@ public class ShortenedUrl {
         return "Активна";
     }
 
-    // Getters (нужны для Jackson)
+    // Геттеры (нужны для Jackson)
     public Url getOriginalUrl() {
         return originalUrl;
     }
@@ -179,6 +179,20 @@ public class ShortenedUrl {
 
     public int getCurrentClicks() {
         return currentClicks;
+    }
+
+    // Метод для создания копии с обновленными параметрами
+    public ShortenedUrl withUpdatedParams(Url newUrl, LocalDateTime newExpiresAt) {
+        return new ShortenedUrl(
+                newUrl != null ? newUrl : this.originalUrl,
+                this.shortCode,
+                this.userId,
+                this.createdAt,
+                newExpiresAt != null ? newExpiresAt : this.expiresAt,
+                this.maxClicks,
+                this.currentClicks,
+                this.active
+        );
     }
 
     @Override
