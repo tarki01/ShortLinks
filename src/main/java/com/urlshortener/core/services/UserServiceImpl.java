@@ -27,7 +27,9 @@ public class UserServiceImpl implements UserManagementUseCase {
 
         userRepository.save(user);
         currentUser = user;
-
+        System.out.println("Был сгенерирован идентификатор вашело пользователя");
+        System.out.println("Короткий: " + userId.shortId());
+        System.out.println("Полный: " + userId.value());
         return user;
     }
 
